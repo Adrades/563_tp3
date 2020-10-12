@@ -22,10 +22,16 @@ int main() {
     if (m5 != NULL) {
         printf("\n");
         AfficherM(m5, 0);
-        printf("\n");
+        printf("\nTest de la copie: ");
         AfficherM(m1, 0);
         printf("\n");
     }
+
+    POLYNOME p2 = PolyCpy(p);
+
+    Ajouter(&p, m1);
+
+    AfficherP(p2, "", 0);
 
     return 0;
 }

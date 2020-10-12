@@ -23,6 +23,7 @@ POLYNOME CreerP(MONOME m) {
     p->terme = cpy_m;
     cpy_m->ordre = m->ordre;
     cpy_m->coeff = m->coeff;
+    cpy_m->suiv = NULL;
     return p;
 }
 
@@ -80,8 +81,14 @@ MONOME Chercher(POLYNOME p, int i) {
 
 // sert à faire une copie d'un POLYNOME
 POLYNOME PolyCpy(POLYNOME p) {
-    POLYNOME cpy_p = (POLYNOME) malloc(sizeof(Polynome));
+    POLYNOME cpy_p = CreerP(p->terme);
 
+    MONOME cur_monome = p->terme;
+
+    while (cur_monome->suiv != NULL){
+        cur_monome = cur_monome->suiv;
+        Ajouter(&cpy_p, cur_monome);
+    }
 
     return cpy_p;
 }
