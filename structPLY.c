@@ -60,9 +60,16 @@ void AfficherM(MONOME m, int i){
 }
 
 // Cherche un MONOME d'ordre int dans un POLYNOME
-//MONOME Chercher(POLYNOME p, int i){
-//
-//}
+MONOME Chercher(POLYNOME p, int i){
+    MONOME cur_monome = p->terme;
+    while (cur_monome->ordre < i && cur_monome->suiv!=NULL){
+        cur_monome = cur_monome->suiv;
+    }
+    if (i==cur_monome->ordre){
+        return cur_monome;
+    }
+    return NULL;
+}
 
 // sert à faire une copie d'un POLYNOME
 //POLYNOME PolyCpy(POLYNOME);
