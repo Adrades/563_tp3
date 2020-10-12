@@ -23,6 +23,8 @@ int main() {
         printf("\n");
         AfficherM(m5, 0);
         printf("\n");
+        AfficherM(m1, 0);
+        printf("\n");
     }
 
     return 0;
