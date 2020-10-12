@@ -2,6 +2,7 @@
 // Created by Adrades on 06/10/2020.
 //
 #include <stdlib.h>
+#include <stdio.h>
 #include "structPLY.h"
 
 // Crée un MONOME de coeff double et d'ordre int
@@ -44,12 +45,18 @@ void Supprimer(POLYNOME* p, MONOME m){
 
 // permet d'afficher un POLYNOME. les params char* et int pourraient être utilisés comme 'options' d'affichage!
 void AfficherP(POLYNOME p,char* str, int i){
-
+    MONOME cur_monome = p->terme;
+    while (cur_monome->suiv != NULL){
+        AfficherM(cur_monome, i);
+        printf(" + ");
+        cur_monome = cur_monome->suiv;
+    }
+    AfficherM(cur_monome, i);
 }
 
 // Affiche un MONOME. Le parametre int est utilisé comme option d'affichage!
 void AfficherM(MONOME m, int i){
-
+    printf("%f x%d", m->coeff, m->ordre);
 }
 
 // Cherche un MONOME d'ordre int dans un POLYNOME
