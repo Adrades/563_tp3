@@ -23,7 +23,18 @@ POLYNOME CreerP(MONOME m){
 
 // Ajoute un MONOME à un POLYNOME*
 void Ajouter(POLYNOME* p, MONOME m){
+    MONOME cur_monome = (*p)->terme;
+    while (cur_monome->ordre > m->ordre){
+        cur_monome = cur_monome->suiv;
+    }
 
+    if (m->ordre == cur_monome->ordre){
+        cur_monome->coeff += m->coeff;
+    } else {
+        MONOME temp = cur_monome->suiv;
+        cur_monome->suiv = m;
+        cur_monome->suiv->suiv = temp;
+    }
 }
 
 // Supprime un MONOME du POLYNOME*
