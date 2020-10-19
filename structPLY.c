@@ -17,24 +17,45 @@ MONOME CreerM(double coeff, int ordre) {
 // Crée un POLYNOME à partir d'un MONOME
 POLYNOME CreerP(MONOME m) {
     POLYNOME p = (POLYNOME) malloc(sizeof(Polynome));
+
     p->degres = 0;
 
-    MONOME cpy_m = (MONOME) malloc(sizeof(Monome));
-    p->terme = cpy_m;
-    cpy_m->ordre = m->ordre;
-    cpy_m->coeff = m->coeff;
-    cpy_m->suiv = NULL;
+    if (m != NULL) {
+        p->degres = m->ordre;
+
+        MONOME cpy_m = (MONOME) malloc(sizeof(Monome));
+        p->terme = cpy_m;
+        cpy_m->ordre = m->ordre;
+        cpy_m->coeff = m->coeff;
+        cpy_m->suiv = NULL;
+    } else {
+        p->degres = 0;
+        p->terme = NULL;
+    }
     return p;
 }
 
+
 // Ajoute un MONOME à un POLYNOME*
 void Ajouter(POLYNOME *p, MONOME m) {
+
+    if ((*p)->terme == NULL) {
+        (*p)->degres = m->ordre;
+        (*p)->terme = m;
+        (*p)->terme->suiv = NULL;
+        return;
+    }
+
+    if ((*p)->degres < m->ordre) {
+        (*p)->degres = m->ordre;
+    }
+
     MONOME cur_monome = (*p)->terme;
-    while (cur_monome->ordre > m->ordre) {
+    while (cur_monome->suiv != NULL && cur_monome->suiv->ordre <= m->ordre) {
         cur_monome = cur_monome->suiv;
     }
 
-    if (m->ordre == cur_monome->ordre) {
+    if (cur_monome != NULL && m->ordre == cur_monome->ordre) {
         cur_monome->coeff += m->coeff;
     } else {
         MONOME cpy_m = (MONOME) malloc(sizeof(Monome));
@@ -81,11 +102,12 @@ MONOME Chercher(POLYNOME p, int i) {
 
 // sert à faire une copie d'un POLYNOME
 POLYNOME PolyCpy(POLYNOME p) {
+
     POLYNOME cpy_p = CreerP(p->terme);
 
     MONOME cur_monome = p->terme;
 
-    while (cur_monome->suiv != NULL){
+    while (cur_monome->suiv != NULL) {
         cur_monome = cur_monome->suiv;
         Ajouter(&cpy_p, cur_monome);
     }
@@ -94,7 +116,65 @@ POLYNOME PolyCpy(POLYNOME p) {
 }
 
 // les 4 fonctions pour une 'arithmétique' polynomiale!!!
-//POLYNOME Add(POLYNOME, POLYNOME);
-//POLYNOME Sub(POLYNOME, POLYNOME);
-//POLYNOME Mul(POLYNOME, POLYNOME);
-//POLYNOME Div(POLYNOME, POLYNOME,POLYNOME*);
+POLYNOME Add(POLYNOME p1, POLYNOME p2) {
+    POLYNOME p3 = PolyCpy(p1);
+    MONOME cur_monome_p2 = p2->terme;
+
+    while (cur_monome_p2 != NULL) {
+        Ajouter(&p3, cur_monome_p2);
+        cur_monome_p2 = cur_monome_p2->suiv;
+    }
+
+    return p3;
+}
+
+POLYNOME Sub(POLYNOME p1, POLYNOME p2) {
+    POLYNOME p3 = PolyCpy(p1);
+    MONOME cur_p2 = p2->terme;
+
+    while (cur_p2 != NULL) {
+        Ajouter(&p3, CreerM(-cur_p2->coeff, cur_p2->ordre));
+        cur_p2 = cur_p2->suiv;
+    }
+    return p3;
+}
+
+POLYNOME Mul(POLYNOME p1, POLYNOME p2) {
+    POLYNOME p3 = PolyCpy(p1);
+    MONOME mul, cur_p3 = p3->terme;
+
+    while (cur_p3 != NULL) {
+        mul = Chercher(p2, cur_p3->ordre);
+        if (mul != NULL) {
+            cur_p3->coeff *= mul->coeff;
+        }
+        cur_p3 = cur_p3->suiv;
+    }
+    return p3;
+
+}
+
+POLYNOME Div(POLYNOME p1, POLYNOME p2, POLYNOME *p3) {
+    POLYNOME quotient = CreerP(NULL);
+    //POLYNOME copiePl = PolyCpy(pl);
+    *p3 = PolyCpy(p1);
+
+    //Tant qu'on peut faire la division
+    while (p1->degres <= (*p3)->degres) {
+
+        //On crée un polynome grace au dividende
+        MONOME degreMax = Chercher(*p3, (*p3)->degres); //Degré max du truc a diviser
+        //On en crée un qui a un ordre - 1
+        MONOME monomeQuotient = CreerM(degreMax->coeff, degreMax->ordre - 1);
+        //On l'ajoute dans notre quotient
+        Ajouter(&quotient, monomeQuotient);
+        //On multiplie notre dividende avec notre monomeQuotient
+        POLYNOME pSous = Mul(p2, CreerP(monomeQuotient));
+        //On soustrait notre diviseur par notre pSous
+        *p3 = Sub(*p3, pSous);
+//        AfficherP(*p3, "reste = ", 43);
+
+    }
+
+    return quotient;
+}

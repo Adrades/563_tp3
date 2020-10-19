@@ -17,6 +17,8 @@ int main() {
 
     AfficherP(p, "", 0);
 
+    // aff 5 x1, 1x 2, 3 x4
+
     MONOME m5 = Chercher(p, 1);
 
     if (m5 != NULL) {
@@ -31,7 +33,39 @@ int main() {
 
     Ajouter(&p, m1);
 
+    printf("\n");
     AfficherP(p2, "", 0);
+    // Idem que précedement
+
+    printf("\n");
+
+    POLYNOME p3 = Add(p, p2);
+
+    printf("\n");
+    AfficherP(p3, "", 0);
+
+    POLYNOME p4 = Sub(p3, p2);
+
+    printf("\n");
+    AfficherP(p4, "", 0);
+
+    POLYNOME p5 = Mul(p4, p3);
+
+    printf("\n");
+    AfficherP(p5, "", 0);
+
+//    POLYNOME pr = CreerP(NULL);
+//
+//    POLYNOME p6 = Div(p5, p3, &pr);
+//
+//    printf("\n");
+//    AfficherP(p6, "", 0);
+//
+//    printf("\n");
+//    AfficherP(pr, "", 0);
+
+
+
 
     return 0;
 }
